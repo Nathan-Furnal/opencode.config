@@ -41,9 +41,11 @@ ERROR: TypeAlias = errno.EEXIST
 
 Using `Any` and `object`,
 
-Generally, use `Any` when a type cannot be expressed appropriately with the current type system or using the correct type is unergonomic.
+Generally, use `Any` when a type cannot be expressed appropriately with the current type
+system or using the correct type is unergonomic.
 
-If a function accepts every possible object as an argument, for example because it's only passed to `str()`, use `object` instead of `Any` as type annotation:
+If a function accepts every possible object as an argument, for example because it's only
+passed to `str()`, use `object` instead of `Any` as type annotation:
 
 ```py
 def print_formatted(o: object) -> None:
@@ -52,7 +54,8 @@ def print_formatted(o: object) -> None:
     print(o)
 ```
 
-Similarly, if the return value of a callback is ignored, annotate it with `object`, not `Any` or `None`:
+Similarly, if the return value of a callback is ignored, annotate it with `object`, not
+`Any` or `None`:
 
 ```py
 def call_cb(cb: Callable[[int], object]) -> None:
@@ -61,9 +64,12 @@ cb(42)
 
 ### Arguments and Return Types
 
-For arguments, prefer protocols and abstract types (`Mapping`, `Sequence`, `Iterable`, etc.). If an argument accepts literally any value, use `object` instead of `Any`.
+For arguments, prefer protocols and abstract types (`Mapping`, `Sequence`, `Iterable`,
+etc.). If an argument accepts literally any value, use `object` instead of `Any`.
 
-For return values, prefer concrete types (`list`, `dict`, etc.) for concrete implementations. The return values of protocols and abstract base classes must be judged on a case-by-case basis.
+For return values, prefer concrete types (`list`, `dict`, etc.) for concrete
+implementations. The return values of protocols and abstract base classes must be judged
+on a case-by-case basis.
 
 Yes:
 
@@ -89,11 +95,13 @@ def foo(self) -> list[int]: ...
 def bar(self) -> Mapping[str, str]: ...
 ```
 
-Avoid union return types, since they require `isinstance()` checks. Use `Any` or `X | Any` if necessary.
+Avoid union return types, since they require `isinstance()` checks.
+Use `Any` or `X | Any` if necessary.
 
 ### Style
 
-Where possible, use shorthand syntax for unions instead of `Union` or `Optional`. `None` should be the last element of an union.
+Where possible, use shorthand syntax for unions instead of `Union` or `Optional`. `None`
+should be the last element of an union.
 
 Yes:
 
@@ -173,8 +181,9 @@ def inner_logic(user: User):
 
 ## Functional Core Imperative Shell
 
-Default to immutable datastructures and functional programming when implementing
-core business logic. Move effects such as I/O, network calls, DB calls, file modifications, etc. At the boundaries of the system.
+Default to immutable datastructures and functional programming when implementing core
+business logic. Move effects such as I/O, network calls, DB calls, file modifications,
+etc. At the boundaries of the system.
 
 Yes:
 
@@ -235,7 +244,8 @@ def call_db(db: DBConnection, query: str):
 - Integration tests should test starting state and end state, not interaction.
 - Integration tests should always improve understanding of the system.
 - Integration tests should always confirm the reliability of the system.
-- Integration tests should never touch production systems, use containers or dev        environments.
+- Integration tests should never touch production systems, use containers or dev
+  environments.
 
 ## Logging
 
@@ -249,8 +259,10 @@ def call_db(db: DBConnection, query: str):
 
 - Never trust user input, always sanitize.
 - Never commit `.env` files.
-- Remove critical information like passwords and credentials from the string representation of objects.
+- Remove critical information like passwords and credentials from the string
+  representation of objects.
 - Always constraint access control as much as possible.
 - Always separate configuration per environment, do not use all encompassing settings.
 - Always use the most up to date libraries for cryptography related code.
-- Write defensive code when used at untrusted boundaries (network, external systems, etc).
+- Write defensive code when used at untrusted boundaries (network, external systems,
+  etc).
