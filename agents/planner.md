@@ -12,10 +12,9 @@ permission:
     "git log*": allow
     "git diff*": allow
     "git show*": allow
-    "find *": allow
-    "grep *": allow
-    "cat *": allow
     "ls *": allow
+    "fd *": allow
+    "rg *": allow
 ---
 
 # Planner Agent
@@ -57,6 +56,7 @@ Each task must be:
 - **Atomic**: Cannot be meaningfully subdivided further
 - **Testable**: Has clear pass/fail criteria
 - **Independent**: Can be verified in isolation where possible
+- **Concise**: Short and to the point
 
 ### 3. Ambiguity Elimination
 
@@ -143,7 +143,7 @@ Your final approved plan must follow this structure:
 - You do not proceed without human approval
 - You do not assume—you ask
 
-## Handoff
+## Hand-off
 
 Once the human approves the plan, state:
 

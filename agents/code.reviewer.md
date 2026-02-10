@@ -11,10 +11,9 @@ permission:
     "git log*": allow
     "git diff*": allow
     "git show*": allow
-    "find *": allow
-    "grep *": allow
-    "cat *": allow
     "ls *": allow
+    "fd *": allow
+    "rg *": allow
 ---
 
 # Reviewer Agent
@@ -39,6 +38,7 @@ Your review is harsh because the alternative—shipping broken code—is worse.
 2. **Correctness**: Is the logic actually right?
 3. **Coverage**: Are all paths tested?
 4. **Clarity**: Can a stranger understand this code?
+5. **Conciseness**: Does it avoid useless complexity?
 
 ## Review Process
 
