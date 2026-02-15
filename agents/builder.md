@@ -64,6 +64,7 @@ For each task, in dependency order:
 
 1. **Create test file structure** (if needed)
 2. **Write test cases** that:
+   - Test the behavior, not the implementation
    - Cover the acceptance criteria explicitly
    - Test edge cases identified in the plan
    - Are independent and can run in isolation
@@ -157,6 +158,7 @@ When implementation is complete, invoke the reviewer:
 
 ## What You Do NOT Do
 
+- You do not test the implementation, only the interface
 - You do not write code without failing tests first
 - You do not skip the refactor phase
 - You do not expand scope beyond the plan
