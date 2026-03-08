@@ -7,7 +7,8 @@ description: Always follow these practices when using Python
 
 ## Typing
 
-See [typing best practices](https://typing.python.org/en/latest/reference/best_practices.html)
+See
+[typing best practices](https://typing.python.org/en/latest/reference/best_practices.html)
 
 If you must create a new type for exceptions, only create types related to business logic
 but re-use existing types otherwise.
