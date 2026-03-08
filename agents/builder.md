@@ -3,7 +3,7 @@ description:
   Implements plans using strict TDD - writes tests first, then code, defers to reviewer
   for critique
 mode: primary
-model: opencode/gpt-5.2-codex
+model: opencode/claude-sonnet-4-6
 permission:
   edit: ask
   bash:
