@@ -7,8 +7,8 @@ description: Follow when asked for help maintain or update code
 
 ## Context
 
-- Project root: !`git rev-parse --show-toplevel`
-- Current branch: !`git branch --show-current`
+- Project root: `git rev-parse --show-toplevel`
+- Current branch: `git branch --show-current`
 
 ## Your task
 
