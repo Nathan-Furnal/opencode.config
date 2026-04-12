@@ -1,7 +1,7 @@
 ---
 description: "Adversarial code reviewer. Invoke with @adversary after implementation. Finds real bugs, not style nits."
 mode: subagent
-model: opencode/gemini-3.1-pro
+model: github-copilot/gemini-3.1-pro-preview
 temperature: 0.3
 permission:
   edit: deny

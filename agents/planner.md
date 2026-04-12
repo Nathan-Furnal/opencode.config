@@ -1,7 +1,7 @@
 ---
 description: "Decomposes feature requests into ordered task lists. Invoke with @planner before starting complex multi-file work."
 mode: subagent
-model: opencode/claude-opus-4-6
+model: github-copilot/claude-opus-4.6
 temperature: 0.2
 permission:
   edit:
