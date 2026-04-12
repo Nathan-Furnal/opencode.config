@@ -1,6 +1,6 @@
 ---
 name: Python maintenance
-description: Follow when asked for help maintain or update code
+description: Follow when asked for help maintain or update code in a Python codebase.
 ---
 
 # Python maintenance
