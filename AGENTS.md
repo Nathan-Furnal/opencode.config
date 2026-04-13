@@ -1,6 +1,7 @@
 # Principles
 
 - Immutable data structures over mutable ones.
+- Avoid nullable types unless nullability has specific semantics.
 - Parse, don't validate.
 - Prefer composition over inheritance unless tracking upstream behavior.
 - Pure functions preferred. Side effects isolated at boundaries.
