@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Structural enforcement backstop (oh-my-pi: make the failure mode impossible,
+# not merely discouraged). Unlike the branch-protection plugin, this cannot be
+# evaded by rephrasing the command — git runs it regardless.
+#
+# Kept FAST (Armin): only the branch guard + lint + type check run here. The
+# test suite runs in pre-push, where latency is less costly.
+#
+# Installed via `npm run setup` (sets core.hooksPath to this directory).
+set -euo pipefail
+
+PROTECTED_RE='^(main|master|production|release)$'
+branch="$(git symbolic-ref --short -q HEAD || echo '')"
+
+if [[ "$branch" =~ $PROTECTED_RE ]]; then
+  echo "BLOCKED: direct commit on protected branch \`$branch\`." >&2
+  echo "Create a feature branch: git checkout -b feature/<name>" >&2
+  exit 1
+fi
+
+# Only gate Python projects; stay silent elsewhere.
+if [[ -f pyproject.toml ]]; then
+  # Prefer the project's uv toolchain, fall back to bare tools, skip if absent.
+  run() { if command -v uv >/dev/null 2>&1; then uv run "$@"; elif command -v "$1" >/dev/null 2>&1; then "$@"; else return 127; fi; }
+
+  if run ruff check . ; then :; else
+    echo "BLOCKED: ruff found lint errors (above). Fix them, then re-commit." >&2
+    exit 1
+  fi
+
+  # Type check is best-effort: skip cleanly if neither ty nor mypy is available.
+  if command -v ty >/dev/null 2>&1 || (command -v uv >/dev/null 2>&1); then
+    if run ty check 2>/dev/null; then :
+    elif run mypy . 2>/dev/null; then :
+    else
+      status=$?
+      if [[ $status -ne 127 ]]; then
+        echo "BLOCKED: type checker reported errors (above). Fix them, then re-commit." >&2
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+exit 0

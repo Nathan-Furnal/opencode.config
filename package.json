@@ -1,0 +1,21 @@
+{
+  "name": "opencode-config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal opencode harness: guides (rules/skills) + sensors (quality gates) + guards.",
+  "scripts": {
+    "test": "node --experimental-strip-types --test \"tests/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "setup": "bash scripts/setup.sh"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "1.17.13",
+    "@types/bun": "^1.1.14",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=22.6.0"
+  }
+}

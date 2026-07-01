@@ -1,14 +1,39 @@
 {
   "$schema": "https://opencode.ai/config.json",
+
+  // --- Real-time sensors (Fowler): the agent sees diagnostics as it types ---
   "lsp": {
-    "ruff": {
-      "command": ["ruff", "server"],
+    "ruff": { "command": ["ruff", "server"], "extensions": [".py"] },
+    "ty": { "command": ["ty", "server"], "extensions": [".py"] },
+    "pyright": { "disabled": true }
+  },
+
+  // --- Mechanical fixing (Armin: the agent should not hand-fix lint) ---
+  // Runs on every .py write/edit, scoped to the edited file via $FILE, in the
+  // background. This is the stable, filename-aware mechanism (preferred over the
+  // experimental file_edited hook). Requires `ruff` on PATH (uv tool install ruff).
+  "formatter": {
+    "ruff-fix": {
+      "command": ["ruff", "check", "--fix", "--quiet", "$FILE"],
       "extensions": [".py"]
     },
-    "ty": {
-      "command": ["ty", "server"],
+    "ruff-format": {
+      "command": ["ruff", "format", "$FILE"],
       "extensions": [".py"]
-    },
-    "pyright": {"disabled": true}
+    }
+  },
+
+  // --- Structural guard (oh-my-pi): make the catastrophic case impossible to ---
+  // fire without a human. Branch-conditional logic stays in the plugin + git
+  // hook; only always-dangerous patterns are pinned here. "*" preserves the
+  // default allow-all so autonomous flows are not slowed for normal work.
+  "permission": {
+    "bash": {
+      "*": "allow",
+      "git push --force*": "ask",
+      "git push -f*": "ask",
+      "rm -rf /*": "ask",
+      "rm -rf ~*": "ask"
+    }
   }
 }

@@ -1,5 +1,5 @@
 import type { Plugin } from "@opencode-ai/plugin"
-import { existsSync } from "fs"
+import { existsSync, readFileSync } from "fs"
 import { join } from "path"
 
 // Compaction preserver: injects critical project files into the
@@ -31,7 +31,7 @@ export const CompactionPreserver: Plugin = async ({ worktree }) => {
         if (!existsSync(path)) continue
 
         try {
-          const content = await Bun.file(path).text()
+          const content = readFileSync(path, "utf8")
           if (!content.trim()) continue
 
           const trimmed = content.length > MAX_CHARS

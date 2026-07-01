@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Structural enforcement backstop for pushes. Reads the refs being pushed from
+# stdin (git's pre-push contract) so it catches `git push origin main`,
+# `HEAD:main`, and friends regardless of phrasing. Runs the test suite here
+# rather than in pre-commit to keep the frequent hook fast.
+#
+# Installed via `npm run setup`.
+set -euo pipefail
+
+PROTECTED_RE='^(main|master|production|release)$'
+
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  target="${remote_ref#refs/heads/}"
+  if [[ "$target" =~ $PROTECTED_RE ]]; then
+    echo "BLOCKED: pushing to protected branch \`$target\`." >&2
+    echo "Open a PR from your feature branch instead." >&2
+    exit 1
+  fi
+done
+
+if [[ -f pyproject.toml ]]; then
+  run() { if command -v uv >/dev/null 2>&1; then uv run "$@"; elif command -v "$1" >/dev/null 2>&1; then "$@"; else return 127; fi; }
+  if run pytest -q ; then :; else
+    status=$?
+    if [[ $status -ne 127 ]]; then
+      echo "BLOCKED: tests failed (above). Fix them before pushing." >&2
+      exit 1
+    fi
+  fi
+fi
+
+exit 0

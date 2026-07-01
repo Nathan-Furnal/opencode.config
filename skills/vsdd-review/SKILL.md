@@ -18,7 +18,9 @@ description: Full adversarial verification cycle for complex features. Use after
    Report any uncovered assertions. Do not proceed until gaps are addressed.
 
 2. **Invoke @adversary**: provide the spec.md, the diff (`git diff main`),
-   and test output (`uv run pytest -v` or equivalent).
+   and test output (`uv run pytest -v` or equivalent). For security-sensitive
+   changes (auth, input handling, crypto, secrets/PII, dependency bumps), also
+   invoke @security-reviewer.
 
 3. **Process feedback**:
    - Spec-level issues: update spec.md as a versioned delta, add tests
@@ -35,10 +37,12 @@ The cycle ends when:
 
 - Every spec assertion is covered by a test
 - The adversary cannot find real problems
-- Linters, type checkers, and tests all pass (enforced by the pre-commit plugin)
+- Linters, type checkers, and tests all pass (enforced by the git pre-commit/pre-push
+  hooks from `githooks/`, installed via `npm run setup`; LSP + the `ruff` formatter give
+  the same signal live during editing)
 
 ## When NOT to use this
 
 Do not run this for trivial changes. Reserve for complex features,
 correctness-critical code, or security-sensitive work. For routine changes,
-the pre-commit plugin provides sufficient quality gating.
+the git pre-commit/pre-push hooks provide sufficient quality gating.
