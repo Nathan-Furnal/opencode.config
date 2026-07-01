@@ -10,10 +10,21 @@ and the fast ones should be computational (linters, types, tests), not inferenti
 points to the `design-principles` skill for structural decisions rather than
 duplicating them.
 
-Subagents in `agents/` enforce a second opinion from a different model: `planner`
-(decomposition, write-only to plan files) and `adversary` (hostile review,
-read-only). Different models for planning vs. review reduces correlated blind
-spots.
+Subagents in `agents/`, each least-privileged and unable to delegate further
+(`task: deny` — opencode subagent permissions are non-transitive, so this closes
+the write-escalation in issue #20549):
+
+- `planner` (Opus 4.8) — decomposition; writes only PLAN/spec/TODO, read-only
+  git, consults `design-principles` + `spec-assertions`.
+- `adversary` (Gemini 3.1 Pro) — hostile review on a *different* model to
+  decorrelate blind spots; grounds findings in ruff/ty/pytest output; bash
+  scoped to verification only; emits a rigid, severity-ordered findings list.
+- `security-reviewer` (Opus 4.8, optional) — focused security pass for
+  auth/input/crypto/secret/dependency changes; runs bandit + pip-audit. Delete
+  it if you prefer the leaner two-agent setup.
+
+`temperature` is low for reviewers (0.1) and each agent has a `steps` cap to
+avoid runaway loops.
 
 ## Guides (feed-forward)
 

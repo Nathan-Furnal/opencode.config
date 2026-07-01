@@ -18,7 +18,9 @@ description: Full adversarial verification cycle for complex features. Use after
    Report any uncovered assertions. Do not proceed until gaps are addressed.
 
 2. **Invoke @adversary**: provide the spec.md, the diff (`git diff main`),
-   and test output (`uv run pytest -v` or equivalent).
+   and test output (`uv run pytest -v` or equivalent). For security-sensitive
+   changes (auth, input handling, crypto, secrets/PII, dependency bumps), also
+   invoke @security-reviewer.
 
 3. **Process feedback**:
    - Spec-level issues: update spec.md as a versioned delta, add tests

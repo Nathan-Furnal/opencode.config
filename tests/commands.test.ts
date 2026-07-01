@@ -22,6 +22,8 @@ test("/vsdd references only skills/agents that exist", () => {
   assert.ok(existsSync(skill("spec-assertions")), "spec-assertions skill exists")
   assert.match(body, /@adversary/)
   assert.ok(existsSync(agent("adversary")), "adversary agent exists")
+  assert.match(body, /@security-reviewer/)
+  assert.ok(existsSync(agent("security-reviewer")), "security-reviewer agent exists")
 })
 
 test("/maintain references the python-maintenance skill, which exists", () => {
