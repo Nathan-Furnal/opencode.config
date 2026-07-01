@@ -5,7 +5,7 @@ description: >-
   bumps — especially in regulated/fintech code. Runs its own tools (bandit,
   pip-audit) and returns a short, evidence-backed findings list.
 mode: subagent
-model: opencode/claude-opus-4-8
+model: github-copilot/claude-opus-4-8
 temperature: 0.1
 steps: 30
 permission:
