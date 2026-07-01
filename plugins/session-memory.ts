@@ -1,5 +1,5 @@
 import type { Plugin } from "@opencode-ai/plugin"
-import { existsSync } from "fs"
+import { existsSync, mkdirSync, writeFileSync } from "fs"
 import { join } from "path"
 
 // Session memory: deterministically writes a summary of recent
@@ -15,7 +15,6 @@ import { join } from "path"
 
 export const SessionMemory: Plugin = async ({ $, worktree, client }) => {
   const memoryDir = join(worktree, ".opencode", "memory")
-  await $`mkdir -p ${memoryDir}`.quiet().nothrow()
 
   let lastHash = ""
 
@@ -60,7 +59,8 @@ export const SessionMemory: Plugin = async ({ $, worktree, client }) => {
           }
         }
 
-        await Bun.write(join(memoryDir, "session-summary.md"), parts.join("\n") + "\n")
+        mkdirSync(memoryDir, { recursive: true })
+        writeFileSync(join(memoryDir, "session-summary.md"), parts.join("\n") + "\n")
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err)
         await client.app.log({

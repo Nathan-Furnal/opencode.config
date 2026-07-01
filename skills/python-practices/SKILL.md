@@ -60,7 +60,7 @@ Similarly, if the return value of a callback is ignored, annotate it with `objec
 
 ```py
 def call_cb(cb: Callable[[int], object]) -> None:
-cb(42)
+    cb(42)
 ```
 
 ### Arguments and Return Types
@@ -92,8 +92,8 @@ Maybe:
 
 ```py
 class MyProto(Protocol):
-def foo(self) -> list[int]: ...
-def bar(self) -> Mapping[str, str]: ...
+    def foo(self) -> list[int]: ...
+    def bar(self) -> Mapping[str, str]: ...
 ```
 
 Avoid union return types, since they require `isinstance()` checks.
@@ -152,7 +152,7 @@ no validation inside core logic, do parsing at the boundaries.
 Yes:
 
 ```py
-@dataclass(frozen=True, kwargs=True)
+@dataclass(frozen=True, kw_only=True)
 class User:
     name: str
     age: int
@@ -161,7 +161,7 @@ class User:
         if not self.name:
             msg = "Name cannot be an empty string."
             raise ValueError(msg)
-        if age < 0:
+        if self.age < 0:
             msg = f"Age cannot be negative, got: {self.age}"
             raise ValueError(msg)
 
@@ -197,7 +197,7 @@ class Currency(enum.StrEnum):
     EUR = enum.auto()
     USD = enum.auto()
 
-@dataclass(frozen=True, kwargs=True)
+@dataclass(frozen=True, kw_only=True)
 class InventoryQuery(QueryData):
     name: str
     price: int
@@ -208,7 +208,7 @@ class InventoryQuery(QueryData):
         if not self.name:
             msg = "Name cannot be an empty string."
             raise ValueError(msg)
-        if price < 0:
+        if self.price < 0:
             msg = f"Price cannot be negative, got: {self.price}"
             raise ValueError(msg)
 
@@ -217,9 +217,9 @@ def build_inventory_query(data: Data):
     return InventoryQuery(
         name=data.name,
         price=data.price,
-        origin=data.country.lower(),
-        currency=data.currency.lower()
-        )
+        origin=Country(data.country.lower()),
+        currency=Currency(data.currency.lower()),
+    )
 
 def make_select_query(table: DBTable, query: QueryData):
     return SQLQuery(table=table,**query)

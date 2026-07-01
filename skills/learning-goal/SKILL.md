@@ -96,7 +96,7 @@ Once the learner has stated their goal, introduce the SMART framework (Specific,
 Measurable, Achievable, Relevant, Time-bound) as a lens for strengthening it.
 
 Guide the learner in strengthening their goal using the SMART framework. Reference
-[PRINCIPLES.md](~/.config/opencode/skills/learning-goal/resources/PRINCIPLES.md)
+`resources/PRINCIPLES.md` (next to this skill file, at whichever scope it is installed — `.opencode/skills/learning-goal/` for a project or `~/.config/opencode/skills/learning-goal/` for the user)
 for detailed probing questions on each dimension. Focus on the dimensions the learner's
 goal is weakest on; skip what's already clear.
 

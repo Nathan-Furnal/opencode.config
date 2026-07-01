@@ -35,10 +35,12 @@ The cycle ends when:
 
 - Every spec assertion is covered by a test
 - The adversary cannot find real problems
-- Linters, type checkers, and tests all pass (enforced by the pre-commit plugin)
+- Linters, type checkers, and tests all pass (enforced by the git pre-commit/pre-push
+  hooks from `githooks/`, installed via `npm run setup`; LSP + the `ruff` formatter give
+  the same signal live during editing)
 
 ## When NOT to use this
 
 Do not run this for trivial changes. Reserve for complex features,
 correctness-critical code, or security-sensitive work. For routine changes,
-the pre-commit plugin provides sufficient quality gating.
+the git pre-commit/pre-push hooks provide sufficient quality gating.

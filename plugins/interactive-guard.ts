@@ -1,12 +1,17 @@
 import type { Plugin } from "@opencode-ai/plugin"
+import { classifyInteractive } from "../lib/interactive-guard.ts"
 
-// Interactive command guard: blocks commands that would hang in
-// OpenCode's non-TTY shell environment, and tells the agent what
-// to use instead.
+// Interactive command guard GUIDE: blocks commands that would hang in OpenCode's
+// non-TTY shell and tells the agent the non-interactive alternative.
 //
-// Known limitation: commands prefixed with env vars (FOO=bar python)
-// or wrapped in pipes (echo | python) slip through because the
-// heuristic only checks the first token. ~90% coverage.
+// Decision logic lives in lib/interactive-guard.ts and is unit-tested. The two
+// holes the previous version documented as "~90%" are now closed and have
+// regression tests: env-var prefixes (`FOO=bar python`) and pipelines/chains
+// (`echo x | python`) are both classified per-segment.
+//
+// This remains a heuristic guide, not a sandbox. The robust defence against a
+// genuinely hung process is a command timeout (which the model sets on the bash
+// tool); this plugin just turns the common footguns into actionable feedback.
 //
 // Disable by deleting this file. No other plugin depends on it.
 
@@ -38,22 +43,15 @@ export const InteractiveGuard: Plugin = async () => {
   return {
     "tool.execute.before": async (input, output) => {
       if (input.tool !== "bash") return
-      const command: string = output.args.command ?? ""
-      const parts = command.trim().split(/\s+/)
-      const binary = parts[0]
+      const command: string = output.args?.command ?? ""
 
-      if (!binary || !ALTERNATIVES[binary]) return
-
-      if (parts.length > 1) {
-        const hasSafeFlag = parts.some(p => SAFE_FLAGS.has(p))
-        const hasFileArg = parts.some(p => /\.\w{1,5}$/.test(p))
-        if (hasSafeFlag || hasFileArg) return
-      }
+      const decision = classifyInteractive(command, ALTERNATIVES, SAFE_FLAGS)
+      if (!decision.block) return
 
       throw new Error(
-        `BLOCKED: \`${binary}\` would start an interactive session that will hang.\n` +
+        `BLOCKED: \`${decision.binary}\` would start an interactive session that will hang.\n` +
         `OpenCode's shell has no TTY.\n` +
-        `${ALTERNATIVES[binary]}.`
+        `${decision.hint}.`,
       )
     },
   }

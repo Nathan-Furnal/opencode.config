@@ -14,7 +14,7 @@ code. These exercises help break the "AI productivity trap" where high velocity 
 and high fluency can lead to missing opportunities for active learning.
 
 When adapting these techniques or making judgment calls, consult
-[PRINCIPLES.md](~/.config/opencode/skills/learning-opportunities/resources/PRINCIPLES.md)
+`resources/PRINCIPLES.md` (next to this skill file, at whichever scope it is installed)
 for the underlying learning science.
 
 ## When to offer exercises
@@ -225,20 +225,16 @@ default exercise offer flow.
 
 ### Finding the orientation file
 
-Look for `resources/orientation.md` relative to this skill file at these locations, in
-order:
+Repo orientation is repo-specific, so it lives in the current project, not in this
+skill's global directory. Look for `.opencode/orientation.md` in the project root.
 
-1. `.opencode/skills/learning-opportunities/resources/orientation.md` (project level)
-2. `~/.config/opencode/skills/learning-opportunities/resources/orientation.md` (user
-   level)
+If it does not exist, stop and tell the user:
 
-If the file does not exist at either location, stop and tell the user:
+> "No orientation file found. Run the `/orient` command first to generate one for this
+> repo. It takes about 30 seconds."
 
-> "No orientation file found. Run `/orient:orient` first to generate one for this repo.
-> It takes about 30 seconds."
-
-See [orient](https://github.com/mcmullarkey/orient) for the plugin that generates
-orientation files.
+The `/orient` command ships with this config (`commands/orient.md`) and writes
+`.opencode/orientation.md` — no external plugin required.
 
 ### Running the orientation exercise
 
@@ -247,7 +243,7 @@ section it contains. Apply all standard skill techniques: pause for input after 
 question, use fading scaffolding, embrace wrong predictions as learning data. The
 orientation file contains repo-specific content but not full pedagogical guidance —
 consult
-[PRINCIPLES.md](https://github.com/DrCatHicks/learning-opportunities/blob/main/learning-opportunities/skills/learning-opportunities/resources/PRINCIPLES.md)
+`resources/PRINCIPLES.md` (next to this skill file)
 as needed when making facilitation decisions.
 
 Before starting, give the user a one-sentence summary of what the orientation covers and

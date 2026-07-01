@@ -1,0 +1,3 @@
+node_modules/
+.opencode/memory/
+*.log
