@@ -31,7 +31,7 @@ permission:
     "rg*": allow
     "ls*": allow
   skill:
-    "python-practices": allow
+    "python": allow
 ---
 
 # Security reviewer
@@ -56,7 +56,7 @@ below. Ground every finding in tool output or a specific line; do not speculate.
 - **AuthZ/AuthN** — missing or incorrect access checks, privilege escalation,
   IDOR, trusting client-supplied identity or role.
 - **Secrets & PII** — secrets in code or logs, PII written to logs or error
-  messages, credentials in object `__repr__`/`__str__` (see python-practices).
+  messages, credentials in object `__repr__`/`__str__` (see the python skill).
 - **Crypto** — weak/insecure algorithms, hardcoded keys/IVs, missing signature
   verification, predictable randomness for security purposes.
 - **Deserialization / SSRF** — untrusted `pickle`/`yaml.load`, user-controlled

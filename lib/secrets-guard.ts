@@ -1,7 +1,7 @@
 // Pure decision logic for the secrets guard.
 //
 // Turns an always-on rule ("never read/commit secrets", stated in the
-// python-practices skill) into a mechanical GUARD (Fowler): the agent cannot
+// python skill) into a mechanical GUARD (Fowler): the agent cannot
 // slurp a .env or private key into context, whether via the read/edit tools or
 // via bash (`cat .env`, `grep KEY .env`). This matters most for a fintech
 // codebase and is the one place a guide alone is not enough — once a secret is

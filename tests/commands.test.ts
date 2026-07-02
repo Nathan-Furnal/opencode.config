@@ -88,10 +88,11 @@ test("WORKFLOWS.md references only agents/commands/skills that exist", () => {
   }
 })
 
-test("/maintain references the python-maintenance skill, which exists", () => {
+test("/maintain is a self-contained hygiene pass that defers architecture to /drift-sweep", () => {
   const body = readFileSync(join(root, "commands", "maintain.md"), "utf8")
-  assert.match(body, /python-maintenance/)
-  assert.ok(existsSync(skill("python-maintenance")), "python-maintenance skill exists")
+  assert.doesNotMatch(body, /python-maintenance/, "no dangling reference to the removed skill")
+  assert.match(body, /drift-sweep/, "defers architectural/memory concerns to /drift-sweep")
+  assert.match(body, /Maintenance Report/, "still prints the maintenance report")
 })
 
 test("orient reference is self-contained: skill points at the local command, which exists", () => {

@@ -5,7 +5,7 @@ import { classifyFileAccess, classifyBashAccess } from "../lib/secrets-guard.ts"
 // into context via the read/edit/write tools or via bash content readers
 // (cat/grep/head/…). Example/template env files stay readable.
 //
-// This enforces the "never trust/commit secrets" rule the python-practices skill
+// This enforces the "never trust/commit secrets" rule the python skill
 // only states. Once a secret is in context it can leak into logs, commits, or
 // the provider — so this is a guard, not a guide.
 //

@@ -66,7 +66,7 @@ diverges from expectation far faster than reading the whole flow.
 
 ## Logging over prints (when you do need output)
 
-If you must instrument, add a structured log line (per the python-practices
+If you must instrument, add a structured log line (per the python
 skill) rather than a bare `print`, and remove it or keep it as a real log
 before committing. Prefer logging the *inputs and outputs of the suspicious
 boundary*, not intermediate scalars.

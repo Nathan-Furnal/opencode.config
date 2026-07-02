@@ -44,7 +44,7 @@ varied Socratic questions, not deterministic verdicts.
   `vsdd-review`), architecture fitness (`arch-fitness`: functional-core /
   imperative-shell import contracts + complexity budgets) and anti-defensive
   design (`illegal-states`: parse-don't-validate, no isinstance sprawl, no
-  swallowed errors), Python practice/tooling/maintenance/debugging, and the
+  swallowed errors), Python standards (`python`) and debugging (`python-debugging`), and the
   learning skills (`learning-goal`, `learning-opportunities`) after Dr. Cat
   Hicks's work.
 
@@ -62,7 +62,7 @@ Deterministic quality gates, layered fast-to-slow:
   Sensors that can't run are skipped with a visible `SKIPPED` line, never
   silently. The plugins below are the fast pre-flight version of the same intent.
 - **On demand:** the `adversary` subagent + `vsdd-review` skill (inferential
-  review), and `python-maintenance` (periodic computational pass).
+  review); the `/maintain` and `/drift-sweep` commands (periodic passes).
 
 ## Plugins
 
