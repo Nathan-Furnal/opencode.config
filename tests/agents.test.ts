@@ -1,10 +1,11 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { readFileSync, readdirSync } from "fs"
+import { readFileSync, readdirSync, existsSync } from "fs"
 import { join } from "path"
 
 const root = join(import.meta.dirname, "..")
 const agentsDir = join(root, "agents")
+const skillPath = (name: string) => join(root, "skills", name, "SKILL.md")
 
 // Lightweight structural checks (the full schema validation runs separately).
 // These catch the common corruptions: missing frontmatter, missing required
@@ -55,8 +56,47 @@ test("adversary denies task delegation (escalation fix, issue #20549)", () => {
   assert.match(fm, /task:\s*deny/, "adversary denies task")
 })
 
+test("adversary hunts over-engineering with the named categories", () => {
+  const body = readFileSync(join(agentsDir, "adversary.md"), "utf8")
+  for (const cat of [
+    "unrequested-fallback",
+    "impossible-case-handling",
+    "swallowed-error",
+    "isinstance-sprawl",
+    "branch-accretion",
+    "simpler-alternative",
+  ]) {
+    assert.match(body, new RegExp(cat), `adversary reviews for ${cat}`)
+  }
+  assert.match(body, /illegal-states/, "adversary anchored to the illegal-states skill")
+})
+
 test("planner denies task delegation and can load design-principles", () => {
   const fm = readFileSync(join(agentsDir, "planner.md"), "utf8")
   assert.match(fm, /task:\s*deny/)
   assert.match(fm, /design-principles/)
+})
+
+test("theory-review interrogates the human, is read-only, and reuses the learning skill", () => {
+  const body = readFileSync(join(agentsDir, "theory-review.md"), "utf8")
+  const fm = body.match(/^---\n([\s\S]*?)\n---\n/)?.[1] ?? ""
+  // read-only + no escalation: it must never edit, delegate, or browse
+  assert.match(fm, /edit:\s*deny/)
+  assert.match(fm, /task:\s*deny/)
+  assert.doesNotMatch(fm, /"\*":\s*allow[\s\S]*bash/, "bash is not blanket-allowed")
+  // it grounds questions in the diff but only via read-only git
+  assert.match(fm, /"git diff\*":\s*allow/)
+  // it must be usable interactively (primary-capable), not subagent-only
+  assert.match(fm, /mode:\s*(all|primary)/)
+  // it reuses the facilitation method rather than duplicating it
+  assert.match(fm, /learning-opportunities/)
+  // guardrail against the failure mode: interrogate the human, not the code
+  assert.match(body, /interrogate the human, not the code/i)
+  assert.match(body, /Learning Debt/, "surfaces gaps as Learning Debt, not code review")
+})
+
+test("learning-opportunities skill routes large changes to @theory-review", () => {
+  const skillBody = readFileSync(skillPath("learning-opportunities"), "utf8")
+  assert.match(skillBody, /@theory-review/)
+  assert.ok(existsSync(join(agentsDir, "theory-review.md")), "theory-review agent exists")
 })

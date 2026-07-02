@@ -9,6 +9,7 @@ import {
   renderNotes,
   removeMatching,
 } from "../lib/memory-store.ts"
+import { analyzeMemory, renderReview } from "../lib/memory-analyze.ts"
 
 // Agent-authored memory: retain / recall / forget durable notes, project-scoped
 // to .opencode/memory/notes.jsonl. Complements the deterministic session-memory
@@ -88,6 +89,23 @@ export const Memory: Plugin = async () => {
             writeFileSync(notesPath(ctx.worktree), body ? body + "\n" : "")
           }
           return `Forgot ${removed} note(s) matching "${args.contains}".`
+        },
+      }),
+
+      memory_review: tool({
+        description:
+          "Summarize accumulated project notes: recurring topics (candidates for a " +
+          "repo-specific skill), friction/frustration notes (annoyances worth removing), " +
+          "and concrete suggestions. Used by /drift-sweep; also useful standalone.",
+        args: {
+          min_topic_count: tool.schema.number().int().min(2).max(20).optional()
+            .describe("Repetitions before a tag counts as recurring (default 3)."),
+        },
+        async execute(args, ctx) {
+          const review = analyzeMemory(readAll(ctx.worktree), {
+            minTopicCount: args.min_topic_count,
+          })
+          return renderReview(review)
         },
       }),
     },

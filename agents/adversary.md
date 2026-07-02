@@ -72,6 +72,25 @@ Given a spec (assertion checklist), the diff, and test/lint/type output:
    the tests don't cover.
 5. **Security surface** — input validation, injection, auth/authz assumptions,
    secret handling. (For deep security work, defer to `@security-reviewer`.)
+6. **Over-engineering and defensive slop** — agent-written code reliably drifts
+   toward local defenses instead of strong invariants. Hunt for:
+   - Fallbacks nobody asked for: default values, silent retries,
+     backwards-compatibility shims not required by any spec assertion. Category
+     `unrequested-fallback`. Quote the spec's silence as evidence.
+   - Handling of impossible states: try/except or None-checks for conditions
+     upstream parsing already rules out. Category `impossible-case-handling`.
+     Cite where the invariant is established.
+   - Swallowed exceptions: bare/broad excepts, `except: return default`,
+     log-and-continue on corruption. Category `swallowed-error`.
+   - `isinstance` dispatch outside boundary parsers where a closed union +
+     `match`, polymorphism, or earlier parsing would carry the type.
+     Category `isinstance-sprawl`.
+   - Branch accumulation: a special case bolted on without restructuring;
+     duplicated near-identical code paths. Category `branch-accretion`.
+   - Simpler implementation exists: same spec assertions satisfiable with
+     meaningfully less mechanism. Category `simpler-alternative` — sketch the
+     simpler shape in one line; only raise it when confident, not as filler.
+   The `illegal-states` skill defines the standard these categories enforce.
 
 ## Output format
 

@@ -24,6 +24,9 @@ Offer an optional 10-15 minute exercise after:
 - Creating new files or modules
 - Database schema changes
 - Architectural decisions or refactors
+- After a **large or LLM-generated change the user will own** (multi-file
+  refactor, rename/extraction, sizeable generated diff) — this is the case for
+  a dedicated pass; see "Post-change theory review" below
 - Implementing unfamiliar patterns
 - Any work where the user asked "why" questions during development
 
@@ -216,6 +219,32 @@ After exploring one instance, have them find a parallel:
 - **Keep exercises to 10-15 minutes** unless they want to go deeper
 - **Be direct about errors**: When they're wrong, say so clearly, then explore why
   without judgment
+
+## Post-change theory review
+
+The inline exercises above suit small, in-the-moment learning. After a *large*
+change — a multi-file refactor, a rename or extraction, a new module, or any
+sizeable diff the LLM produced that the user will maintain — the risk is
+different: the user inherits code whose theory (in Naur's sense: why it's shaped
+this way, what invariants hold, how to extend it) never got built in their head,
+because they didn't do the wrestling that builds it. Reading and approving the
+diff produces recognition, not the reconstructable understanding they'll need to
+debug or change it later.
+
+For those cases, offer the dedicated interrogation agent rather than a quick
+exercise:
+
+> "That was a big change. Want a theory review? Switch into `@theory-review` and
+> it'll quiz you on this diff for ~10 minutes to find where the understanding is
+> solid and where it's thin. (Or skip — fine if this is throwaway code.)"
+
+The `@theory-review` agent (ships with this config) runs the interrogation as a
+back-and-forth: it reads the diff, asks retrieval-first questions about the
+design decisions, invariants, extension points, and seams, and returns a
+Learning Debt map — what the user holds, what's shaky, what's a gap and how to
+close it. It uses this skill's facilitation method, so the pause-for-input and
+non-judgmental rules here apply there too. Skip it for genuinely ephemeral work;
+theory investment should track how long the user will live with the code.
 
 ## Orientation mode
 

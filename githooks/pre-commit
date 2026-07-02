@@ -20,26 +20,53 @@ fi
 
 # Only gate Python projects; stay silent elsewhere.
 if [[ -f pyproject.toml ]]; then
-  # Prefer the project's uv toolchain, fall back to bare tools, skip if absent.
-  run() { if command -v uv >/dev/null 2>&1; then uv run "$@"; elif command -v "$1" >/dev/null 2>&1; then "$@"; else return 127; fi; }
+  # Prefer the project's uv environment; uv falls back to PATH tools itself.
+  run() { if command -v uv >/dev/null 2>&1; then uv run --quiet "$@"; else "$@"; fi; }
+  # A tool is available if it runs directly or inside the uv environment.
+  # (Exit codes can't distinguish "tool missing" from "tool found problems" —
+  # uv exits 2 for both a spawn failure and some real failures — so probe
+  # availability explicitly and keep failure exit codes meaning failure.)
+  avail() {
+    command -v "$1" >/dev/null 2>&1 && return 0
+    command -v uv >/dev/null 2>&1 && uv run --quiet -- "$1" --version >/dev/null 2>&1
+  }
+  skip() { echo "SKIPPED: $1 not available; that sensor did not run." >&2; }
 
-  if run ruff check . ; then :; else
-    echo "BLOCKED: ruff found lint errors (above). Fix them, then re-commit." >&2
-    exit 1
-  fi
+  if avail ruff; then
+    if run ruff check . ; then :; else
+      echo "BLOCKED: ruff found lint errors (above). Fix them, then re-commit." >&2
+      exit 1
+    fi
+  else skip ruff; fi
 
-  # Type check is best-effort: skip cleanly if neither ty nor mypy is available.
-  if command -v ty >/dev/null 2>&1 || (command -v uv >/dev/null 2>&1); then
-    if run ty check 2>/dev/null; then :
-    elif run mypy . 2>/dev/null; then :
-    else
-      status=$?
-      if [[ $status -ne 127 ]]; then
-        echo "BLOCKED: type checker reported errors (above). Fix them, then re-commit." >&2
+  # Architecture fitness (Ford/Parsons/Kua; Böckeler's computational sensor):
+  # import-linter verifies dependency-direction contracts, e.g. the functional
+  # core never imports the imperative shell. Only runs when the repo declares
+  # contracts ([tool.importlinter] in pyproject.toml or an .importlinter file);
+  # silent otherwise. See skills/arch-fitness for contract templates.
+  if grep -q '\[tool\.importlinter\]' pyproject.toml 2>/dev/null || [[ -f .importlinter ]]; then
+    if avail lint-imports; then
+      if run lint-imports ; then :; else
+        echo "BLOCKED: architecture contract violated (above)." >&2
+        echo "A dependency crosses a declared boundary (e.g. core importing shell)." >&2
+        echo "Fix the dependency direction; do not weaken the contract." >&2
         exit 1
       fi
-    fi
+    else skip "lint-imports (contracts are declared but unenforced!)"; fi
   fi
+
+  # Type check with whichever checker the project has; skip visibly if neither.
+  if avail ty; then
+    if run ty check ; then :; else
+      echo "BLOCKED: ty reported type errors (above). Fix them, then re-commit." >&2
+      exit 1
+    fi
+  elif avail mypy; then
+    if run mypy . ; then :; else
+      echo "BLOCKED: mypy reported type errors (above). Fix them, then re-commit." >&2
+      exit 1
+    fi
+  else skip "ty/mypy"; fi
 fi
 
 exit 0

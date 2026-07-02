@@ -2,7 +2,8 @@
 
 - Immutable data structures over mutable ones.
 - Avoid nullable types unless nullability has specific semantics.
-- Parse, don't validate.
+- Parse, don't validate. Before adding a try/except, isinstance check, fallback,
+  or None-guard, load the `illegal-states` skill and apply its checklist.
 - Prefer composition over inheritance unless tracking upstream behavior.
 - Pure functions preferred. Side effects isolated at boundaries.
 - Explicit error types or exceptions. No swallowing errors silently.

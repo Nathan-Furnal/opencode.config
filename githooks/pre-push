@@ -19,13 +19,18 @@ while read -r _local_ref _local_sha remote_ref _remote_sha; do
 done
 
 if [[ -f pyproject.toml ]]; then
-  run() { if command -v uv >/dev/null 2>&1; then uv run "$@"; elif command -v "$1" >/dev/null 2>&1; then "$@"; else return 127; fi; }
-  if run pytest -q ; then :; else
-    status=$?
-    if [[ $status -ne 127 ]]; then
+  run() { if command -v uv >/dev/null 2>&1; then uv run --quiet "$@"; else "$@"; fi; }
+  avail() {
+    command -v "$1" >/dev/null 2>&1 && return 0
+    command -v uv >/dev/null 2>&1 && uv run --quiet -- "$1" --version >/dev/null 2>&1
+  }
+  if avail pytest; then
+    if run pytest -q ; then :; else
       echo "BLOCKED: tests failed (above). Fix them before pushing." >&2
       exit 1
     fi
+  else
+    echo "SKIPPED: pytest not available; tests did not run." >&2
   fi
 fi
 

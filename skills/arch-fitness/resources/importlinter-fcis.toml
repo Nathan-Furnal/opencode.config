@@ -1,0 +1,57 @@
+# Architecture fitness template — copy into pyproject.toml and rename modules.
+# Requires: uv add --group lint import-linter
+# Enforced by: githooks/pre-commit (runs `lint-imports` when contracts exist).
+
+[tool.importlinter]
+root_package = "myproject"
+# Required when contracts forbid external packages (stdlib/third-party):
+include_external_packages = true
+
+# --- Functional core / imperative shell ------------------------------------
+
+# The pure core never imports the imperative shell.
+[[tool.importlinter.contracts]]
+name = "Core is independent of the shell"
+type = "forbidden"
+source_modules = ["myproject.core"]
+forbidden_modules = ["myproject.shell"]
+
+# The core performs no I/O: side effects live only in the shell.
+# Trim this list to what the project actually needs to forbid.
+[[tool.importlinter.contracts]]
+name = "Core performs no I/O"
+type = "forbidden"
+source_modules = ["myproject.core"]
+forbidden_modules = [
+  "os", "sys", "io", "pathlib", "subprocess", "socket",
+  "shutil", "tempfile", "sqlite3", "http", "urllib",
+  "requests", "httpx", "aiohttp", "asyncio",
+]
+
+# --- Alternative: layered architecture (delete if using FCIS above) --------
+# Each layer may import the ones BELOW it, never above.
+# [[tool.importlinter.contracts]]
+# name = "Layers flow downward"
+# type = "layers"
+# layers = [
+#   "myproject.api",
+#   "myproject.services",
+#   "myproject.domain",
+# ]
+
+# --- Complexity budgets (enforced by the existing ruff gate) ----------------
+
+[tool.ruff.lint]
+extend-select = [
+  "C901",    # cyclomatic complexity over budget
+  "PLR0911", # too many return statements
+  "PLR0912", # too many branches
+  "PLR0913", # too many arguments
+  "PLR0915", # too many statements
+  "BLE001",  # blind `except Exception` (see illegal-states skill)
+  "S110",    # try/except/pass swallows errors silently
+  "S112",    # try/except/continue swallows errors silently
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10

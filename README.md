@@ -4,6 +4,9 @@ My opencode harness. Framed as **guides** (steer before acting) and **sensors**
 (check after acting), after Böckeler/Fowler's harness engineering: you want both,
 and the fast ones should be computational (linters, types, tests), not inferential.
 
+See **WORKFLOWS.md** for end-to-end recipes (add a feature, review, enter a new
+codebase, refactor, debug, choose hands-off vs hands-on, keep entropy down).
+
 ## Agents
 
 `AGENTS.md` holds the always-on rules, injected every turn. Keep it lean; it
@@ -22,16 +25,28 @@ the write-escalation in issue #20549):
 - `security-reviewer` (Opus 4.8, optional) — focused security pass for
   auth/input/crypto/secret/dependency changes; runs bandit + pip-audit. Delete
   it if you prefer the leaner two-agent setup.
+- `theory-review` (Opus 4.8, `mode: all`) — interrogates *you*, not the code,
+  after a large or LLM-generated change: retrieval-first questions about the
+  design decisions, invariants, and seams of the diff, ending in a Learning
+  Debt map (what you hold / what's shaky / what's a gap and how to close it).
+  The one sensor pointed at the human's understanding rather than the artifact,
+  after Naur's theory-building and the learning-science of the `learning-*`
+  skills. Switch into it for the back-and-forth; read-only, never edits.
 
 `temperature` is low for reviewers (0.1) and each agent has a `steps` cap to
-avoid runaway loops.
+avoid runaway loops. The `theory-review` agent runs warmer (0.5) since it needs
+varied Socratic questions, not deterministic verdicts.
 
 ## Guides (feed-forward)
 
 - `AGENTS.md` — coding rules and workflow.
 - `skills/` — software-design steering (`design-principles`, `spec-assertions`,
-  `vsdd-review`), Python practice/tooling/maintenance/debugging, and the learning skills
-  (`learning-goal`, `learning-opportunities`) after Dr. Cat Hicks's work.
+  `vsdd-review`), architecture fitness (`arch-fitness`: functional-core /
+  imperative-shell import contracts + complexity budgets) and anti-defensive
+  design (`illegal-states`: parse-don't-validate, no isinstance sprawl, no
+  swallowed errors), Python practice/tooling/maintenance/debugging, and the
+  learning skills (`learning-goal`, `learning-opportunities`) after Dr. Cat
+  Hicks's work.
 
 ## Sensors (feedback)
 
@@ -41,9 +56,11 @@ Deterministic quality gates, layered fast-to-slow:
   `ruff` formatter auto-fixes and formats each `.py` edit (`opencode.jsonc`), so
   the agent never hand-fixes lint.
 - **Commit-time:** the `githooks/` pre-commit hook runs branch guard + `ruff` +
-  type check; pre-push runs the test suite. These are the *un-evadable*
-  enforcement — install per work repo with `npm run setup`. The plugins below
-  are the fast pre-flight version of the same intent.
+  import-linter architecture contracts (when the repo declares them — see the
+  `arch-fitness` skill) + type check; pre-push runs the test suite. These are
+  the *un-evadable* enforcement — install per work repo with `npm run setup`.
+  Sensors that can't run are skipped with a visible `SKIPPED` line, never
+  silently. The plugins below are the fast pre-flight version of the same intent.
 - **On demand:** the `adversary` subagent + `vsdd-review` skill (inferential
   review), and `python-maintenance` (periodic computational pass).
 
@@ -60,6 +77,10 @@ Local plugins in `plugins/`, auto-loaded at startup:
   env files stay readable.
 - `compaction-preserver` — injects PLAN/spec/TODO/session-summary into the
   compaction prompt so they survive context trimming.
+- `memory` — agent-authored durable notes (`memory_retain` / `memory_recall` /
+  `memory_forget`) in `.opencode/memory/notes.jsonl`, plus `memory_review`,
+  which mines the notes for recurring topics (repo-skill candidates) and
+  friction (annoyances to remove) — the evidence source for `/drift-sweep`.
 - `session-memory` — writes a git-activity summary to
   `.opencode/memory/session-summary.md` on idle (read at session start).
 - `trace-logger` — appends every tool call to `.opencode/memory/trace.jsonl`
@@ -77,6 +98,9 @@ Explicit slash commands in `commands/` wrap the review workflows:
 
 - `/vsdd` — run the verification-driven review cycle (spec coverage + adversary).
 - `/maintain` — run the conservative maintenance pass.
+- `/drift-sweep` — garbage-collection sweep: architecture drift, defensive-code
+  accretion, context rot, and a memory review that proposes repo-specific
+  skills from recurring topics and fixes for recorded frustrations.
 
 ## Develop
 
