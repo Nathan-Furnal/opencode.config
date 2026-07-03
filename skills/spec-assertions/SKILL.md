@@ -1,6 +1,6 @@
 ---
 name: spec-assertions
-description: Create or refine a feature spec as an assertion checklist. Use when defining requirements before implementation.
+description: Turn a feature request into a checklist of testable assertions before any code is written. Use when starting a feature, pinning down requirements, or when @planner or the /vsdd cycle needs a spec.md to verify against.
 ---
 
 # Specifications assertions

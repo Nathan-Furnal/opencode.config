@@ -3,7 +3,11 @@ description: Run the verification-driven review cycle on the current work.
 subtask: true
 ---
 
-Run the Verification Driven Development cycle using the `vsdd-review` skill.
+Run the Verification Driven Development cycle on the current work.
+
+Reserve this for complex features, correctness-critical code, or
+security-sensitive work. For routine changes the pre-commit/pre-push hooks are
+sufficient gating — don't run the full cycle on trivial diffs.
 
 Scope: $ARGUMENTS
 

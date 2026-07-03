@@ -41,7 +41,7 @@ varied Socratic questions, not deterministic verdicts.
 
 - `AGENTS.md` — coding rules and workflow.
 - `skills/` — software-design steering (`design-principles`, `spec-assertions`,
-  `vsdd-review`), architecture fitness (`arch-fitness`: functional-core /
+  the review cycle via `/vsdd`), architecture fitness (`arch-fitness`: functional-core /
   imperative-shell import contracts + complexity budgets) and anti-defensive
   design (`illegal-states`: parse-don't-validate, no isinstance sprawl, no
   swallowed errors), Python standards (`python`) and debugging (`python-debugging`), and the
@@ -61,7 +61,7 @@ Deterministic quality gates, layered fast-to-slow:
   the *un-evadable* enforcement — install per work repo with `npm run setup`.
   Sensors that can't run are skipped with a visible `SKIPPED` line, never
   silently. The plugins below are the fast pre-flight version of the same intent.
-- **On demand:** the `adversary` subagent + `vsdd-review` skill (inferential
+- **On demand:** the `adversary` subagent via the `/vsdd` cycle (inferential
   review); the `/maintain` and `/drift-sweep` commands (periodic passes).
 
 ## Plugins

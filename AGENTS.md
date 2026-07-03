@@ -11,6 +11,10 @@
 - Comments should stay in sync with the code and describe why it does something.
 - For structural forks (module boundaries, when to add indirection, when to
   refactor), load the `design-principles` skill rather than deciding ad hoc.
+- Record the *why* behind non-obvious structural decisions — the choice, the
+  rejected alternative, and the decision it hides (its "secret") — via
+  `memory_retain` or a short ADR. Undocumented rationale is how a design ages and
+  its theory is lost.
 
 ## Verification
 

@@ -1,6 +1,6 @@
 ---
 name: learning-goal
-description: Guide the learner through a structured goal-setting exercise grounded in research on Mental Contrasting with Implementation Intentions (MCII). The exercise helps developers set concrete learning goals, visualize meaningful outcomes, anticipate realistic obstacles, and build if-then plans to overcome them.
+description: Structured learning-goal setting using Mental Contrasting with Implementation Intentions (MCII). Use when the user wants to set a learning goal, plan skill development at a project kickoff, or turn a vague "I want to get better at X" into concrete if-then plans they'll follow through on.
 license: CC-BY-4.0
 ---
 

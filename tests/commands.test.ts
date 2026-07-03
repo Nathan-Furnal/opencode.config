@@ -16,8 +16,8 @@ test("every command file has a description in valid frontmatter", () => {
 
 test("/vsdd references only skills/agents that exist", () => {
   const body = readFileSync(join(root, "commands", "vsdd.md"), "utf8")
-  assert.match(body, /vsdd-review/)
-  assert.ok(existsSync(skill("vsdd-review")), "vsdd-review skill exists")
+  assert.doesNotMatch(body, /vsdd-review/, "cycle is inlined, not delegated to a removed skill")
+  assert.match(body, /spec-assertions/, "still points at the spec-assertions skill")
   assert.match(body, /spec-assertions/)
   assert.ok(existsSync(skill("spec-assertions")), "spec-assertions skill exists")
   assert.match(body, /@adversary/)
@@ -96,13 +96,18 @@ test("/maintain is a self-contained hygiene pass that defers architecture to /dr
 })
 
 test("orient reference is self-contained: skill points at the local command, which exists", () => {
-  const skillBody = readFileSync(skill("learning-opportunities"), "utf8")
-  // no dangling external references remain
-  assert.doesNotMatch(skillBody, /mcmullarkey\/orient/, "external orient plugin ref removed")
-  assert.doesNotMatch(skillBody, /orient:orient/, "external /orient:orient ref removed")
-  assert.doesNotMatch(skillBody, /github\.com\/DrCatHicks/, "external PRINCIPLES url removed")
-  // it points at the local command, which exists
-  assert.match(skillBody, /commands\/orient\.md/)
+  const dir = join(root, "skills", "learning-opportunities")
+  const skillBody = readFileSync(join(dir, "SKILL.md"), "utf8")
+  // orientation detail now lives in a loaded-on-demand resource
+  const orientBody = readFileSync(join(dir, "resources", "orientation.md"), "utf8")
+  const both = skillBody + orientBody
+  // no dangling external references remain in either file
+  assert.doesNotMatch(both, /mcmullarkey\/orient/, "external orient plugin ref removed")
+  assert.doesNotMatch(both, /orient:orient/, "external /orient:orient ref removed")
+  assert.doesNotMatch(both, /github\.com\/DrCatHicks/, "external PRINCIPLES url removed")
+  // the skill routes orient mode to the resource, which points at the local command
+  assert.match(skillBody, /resources\/orientation\.md/, "skill routes orient mode to the resource")
+  assert.match(orientBody, /commands\/orient\.md/)
   assert.ok(existsSync(join(root, "commands", "orient.md")), "local /orient command exists")
 })
 
